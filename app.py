@@ -2,24 +2,22 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
-import os
 
 # Impostazioni della pagina web
 st.set_page_config(page_title="Dashboard Tesi", layout="centered")
 st.title("🧠 Escalation della Medicalizzazione")
 st.markdown("### Analisi Comparativa: Consumo Antidepressivi vs Prevalenza Malattia")
 
-# 1. CARICAMENTO DATI
-percorso = '/content/consumo_antidepressivi.csv' if os.path.exists('/content/consumo_antidepressivi.csv') else '/consumo_antidepressivi.csv'
-
 try:
-    # Preparazione dati farmaci
+    # 1. CARICAMENTO DATI (Percorso corretto per GitHub/Streamlit)
+    percorso = 'consumo_antidepressivi.csv'
     df_farmaci = pd.read_csv(percorso)
+    
     df_antidep = df_farmaci[df_farmaci['PHARMACEUTICAL'].str.contains('N06A', na=False)].copy()
     df_antidep = df_antidep.rename(columns={'Reference area': 'Paese', 'TIME_PERIOD': 'Anno'})
     df_antidep['Anno'] = df_antidep['Anno'].astype(int)
 
-    # Preparazione dati malattia (il motore che abbiamo creato prima)
+    # Preparazione dati malattia simulati
     paesi_unici = df_antidep['Paese'].unique()
     anni_unici = sorted(df_antidep['Anno'].unique())
     dati_simulati = []
@@ -58,7 +56,6 @@ try:
     lines_2, labels_2 = ax2.get_legend_handles_labels()
     ax1.legend(lines_1 + lines_2, labels_1 + labels_2, loc='upper left')
     
-    # Mostriamo il grafico sul sito
     st.pyplot(fig)
 
     # 4. REPORT TESTUALE
@@ -79,4 +76,4 @@ try:
         st.info("ℹ️ Il consumo di farmaci segue un trend allineato alle diagnosi cliniche.")
 
 except Exception as e:
-    st.error(f"Errore di caricamento. Assicurati che il file 'consumo_antidepressivi.csv' sia nella cartella a sinistra.")
+    st.error(f"Errore tecnico: {e}")
